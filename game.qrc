@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/game"/>
+    <qresource prefix="/high_scores">
+        <file>high_scores.txt</file>
+    </qresource>
+</RCC>

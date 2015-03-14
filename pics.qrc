@@ -1,0 +1,27 @@
+<RCC>
+    <qresource prefix="/pics">
+        <file>black_lab.jpg</file>
+        <file>black_lab_2.jpg</file>
+        <file>black_lab_fence.jpg</file>
+        <file>black_lab_fence_2.jpg</file>
+        <file>dachshund.jpg</file>
+        <file>dachshund_2.jpg</file>
+        <file>dachshund_fence.jpg</file>
+        <file>dachshund_fence_2.jpg</file>
+        <file>fence.jpg</file>
+        <file>german_shepherd.jpg</file>
+        <file>german_shepherd_2.jpg</file>
+        <file>german_shepherd_fence.jpg</file>
+        <file>german_shepherd_fence_2.jpg</file>
+        <file>grass.jpg</file>
+        <file>red.jpg</file>
+        <file>sheep.jpg</file>
+        <file>sheep_2.jpg</file>
+        <file>snake.jpg</file>
+        <file>snake_2.jpg</file>
+        <file>wolf.jpg</file>
+        <file>wolf_2.jpg</file>
+        <file>wolf_fence.jpg</file>
+        <file>wolf_fence_2.jpg</file>
+    </qresource>
+</RCC>
