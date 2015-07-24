@@ -24,14 +24,14 @@ PauseWindow::PauseWindow(QWidget *parent) : QWidget(parent){
     setLayout(v);
 }
 
-/* @function setunpausebutton
+/** @function setunpausebutton
  * @brief sets the member variable to a pause button so that it can be called by the gameboard
  */
 void PauseWindow::setunpausebutton(QPushButton* p){
     button = p;
 }
 
-/* @function unpause_button
+/** @function unpause_button
  * @brief links the QPushButton to tghe member variable
  */
 QPushButton* PauseWindow::unpause_button(){

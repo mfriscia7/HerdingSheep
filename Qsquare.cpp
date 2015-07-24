@@ -9,7 +9,7 @@ QSquare::QSquare(){
     snake = false;
 }
 
-/* @function setFence
+/*** @function setFence
  * @brief sets the QSquare to be considered a fence square
  */
 void QSquare::setFence(){
@@ -21,7 +21,7 @@ void QSquare::setFence(){
     setPixmap(QPixmap(":/pics/fence.jpg").scaled(29,29,Qt::KeepAspectRatio));
 }
 
-/* @function setSheep
+/** @function setSheep
  * @brief sets the QSquare to be considered a sheep square, called when sheep is added or moved
  */
 void QSquare::setSheep(){
@@ -30,7 +30,7 @@ void QSquare::setSheep(){
     fence = false;
 }
 
-/* @function setHero
+/** @function setHero
  * @brief sets the QSquare to be considered a hero square
  */
 void QSquare::setHero(){
@@ -39,7 +39,7 @@ void QSquare::setHero(){
     snake = false;
 }
 
-/* @function seGrass
+/** @function seGrass
  * @brief sets the QSquare to be considered a grass square
  */
 void QSquare::setGrass(){
@@ -50,7 +50,7 @@ void QSquare::setGrass(){
     setPixmap(QPixmap(":/pics/grass.jpg").scaled(29,29,Qt::KeepAspectRatio));
 }
 
-/* @function setSnake
+/** @function setSnake
  * @brief sets the QSquare to be considered a snake square
  */
 void QSquare::setSnake(){
@@ -61,7 +61,7 @@ void QSquare::setSnake(){
     setPixmap(QPixmap(":/pics/snake.jpg").scaled(29,29,Qt::KeepAspectRatio));
 }
 
-/* @function setTempFence
+/** @function setTempFence
  * @brief sets the QSquare to be considered a TempFence square
  */
 void QSquare::setTempFence(){

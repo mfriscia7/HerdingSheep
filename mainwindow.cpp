@@ -183,14 +183,14 @@ MainWindow::~MainWindow()
 
 }
 
-/* @function setgameboard
+/** @function setgameboard
  * @brief sets the board member variable to the parameter passed in
  */
 void MainWindow::setgameboard(gameboard* game_board){
     board = game_board;
 }
 
-/* @function closeEvent
+/** @function closeEvent
  * @brief stops window from closing and opens a Quit Widget instead
  */
 void MainWindow::closeEvent(QCloseEvent *e) {
@@ -198,35 +198,35 @@ void MainWindow::closeEvent(QCloseEvent *e) {
     qwidget->show();
 }
 
-/* @function setQuitWidget
+/** @function setQuitWidget
  * @brief sets the qwidget member variable to a quit widget
  */
 void MainWindow::setQuitWidget(QuitWidget* quit_widget) {
     qwidget = quit_widget;
 }
 
-/* @function setplaybutton
+/** @function setplaybutton
  * @brief sets the play button so that we can access it from a connect in main
  */
 void MainWindow::setplaybutton(QPushButton* p){
     play = p;
 }
 
-/* @function play_button
+/** @function play_button
  * @brief returns play button so that main can access it
  */
 QPushButton* MainWindow::play_button(){
     return play;
 }
 
-/* @function setinstruct
+/** @function setinstruct
  * @brief sets the instruct button so that we can access it from a connect in main
  */
 void MainWindow::setinstructbutton(QPushButton* inst){
     instruct = inst;
 }
 
-/* @function instruct
+/** @function instruct
  * @brief returns instruction button so that
  * instructions will be shown on click
  */
@@ -234,7 +234,7 @@ QPushButton* MainWindow::instruct_button(){
     return instruct;
 }
 
-/* @function clear_gameboard
+/** @function clear_gameboard
  * @brief creates a new gameboard object to start a new game
  */
 void MainWindow::clear_gameboard(){
@@ -242,7 +242,7 @@ void MainWindow::clear_gameboard(){
     board->clear_board();
 }
 
-/* @function connect_hero
+/** @function connect_hero
  * @brief connects the hero choice buttons to the hero pixmaps to change heros picture
  */
 void MainWindow::connect_hero(){
@@ -252,7 +252,7 @@ void MainWindow::connect_hero(){
     QObject::connect(wolf, SIGNAL(clicked()), board, SLOT(set_wolf()));
 }
 
-/* @function update_high_scores
+/** @function update_high_scores
  * @brief changes the high scores shown in the main window when a game ends, in case a new score is added
  */
 void MainWindow::update_high_scores(){

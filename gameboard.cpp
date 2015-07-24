@@ -130,7 +130,7 @@ gameboard::gameboard(QWidget *parent) :
 
 }
 
-/* @function set_lab
+/** @function set_lab
  * @brief this sets all the pixmaps to various black lab pictures
  */
 void gameboard::set_lab(){
@@ -148,7 +148,7 @@ void gameboard::set_lab(){
     lives[2]->setPixmap(QPixmap(*hero_r_text));
 }
 
-/* @function set_german
+/** @function set_german
  * @brief this sets all the pixmaps to various german shepherd pictures
  */
 void gameboard::set_german(){
@@ -166,7 +166,7 @@ void gameboard::set_german(){
     lives[2]->setPixmap(QPixmap(*hero_r_text));
 }
 
-/* @function set_dach
+/** @function set_dach
  * @brief this sets all the pixmaps to various dachshund pictures
  */
 void gameboard::set_dach(){
@@ -184,7 +184,7 @@ void gameboard::set_dach(){
     lives[2]->setPixmap(QPixmap(*hero_r_text));
 }
 
-/* @function set_wolf
+/** @function set_wolf
  * @brief this sets all the pixmaps to various wolf pictures
  */
 void gameboard::set_wolf(){
@@ -202,14 +202,14 @@ void gameboard::set_wolf(){
     lives[2]->setPixmap(QPixmap(*hero_r_text));
 }
 
-/* @function setsmallestscore
+/** @function setsmallestscore
  * @brief sets the lowest score to check if new high score is reached at the end of the game
  */
 void gameboard::setsmallestscore(){
     smallest_score = mw->getsmallestscore();
 }
 
-/* @function close event
+/** @function close event
  * @brief hides game window, resets scores and returns to main menu window
  */
 void gameboard::closeEvent(QCloseEvent *e) {
@@ -222,7 +222,7 @@ void gameboard::closeEvent(QCloseEvent *e) {
     mw->clear_gameboard();
 }
 
-/* @function setMainWindow
+/** @function setMainWindow
  * @brief sets the mw member object of gameboard to a MainWindow parameter
  */
 void gameboard::setMainWindow(MainWindow* main_window) {
@@ -231,7 +231,7 @@ void gameboard::setMainWindow(MainWindow* main_window) {
     setsmallestscore();
 }
 
-/* @function clear_board
+/** @function clear_board
  * @brief resets all member variables that affect what is shown in the gameboard
  */
 void gameboard::clear_board(){
@@ -256,35 +256,35 @@ void gameboard::clear_board(){
     check_progress();
 }
 
-/* @function setnewscorewindow
+/** @function setnewscorewindow
  * @brief sets the member variable to a score window so that it can be called by the gameboard
  */
 void gameboard::setnewscorewindow(add_new_score *add){
     new_score_window = add;
 }
 
-/* @function setgameoverwindow
+/** @function setgameoverwindow
  * @brief sets the member variable to a pause window so that it can be called by the gameboard
  */
 void gameboard::setgameoverwindow(no_new_score *no){
     no_score_window = no;
 }
 
-/* @function setpausewindow
+/** @function setpausewindow
  * @brief sets the member variable to a pause window so that it can be called by the gameboard
  */
 void gameboard::setpausewindow(PauseWindow *p){
     pause_window = p;
 }
 
-/* @function setlevelwindow
+/** @function setlevelwindow
  * @brief sets the member variable to a level complete window so that it can be called by the gameboard
  */
 void gameboard::setlevelwindow(level_complete *l){
     level_win = l;
 }
 
-/* @function initialize_board
+/** @function initialize_board
  * @brief initializes board to begin a new game, resets lives, movement, etc.
  * @param curr_level determines which level is set up in the gameboard
  */
@@ -418,7 +418,7 @@ void gameboard::initialize_board(){
     }
 }
 
-/* @function keyPressEvent
+/** @function keyPressEvent
  * @brief gets user input from keyboard to determine where to move hero or to pause the game
  */
 void gameboard::keyPressEvent(QKeyEvent *event){
@@ -475,7 +475,7 @@ void gameboard::keyPressEvent(QKeyEvent *event){
     }
 }
 
-/* @function update_hero
+/** @function update_hero
  * @brief this serves as a sort of translator that converts commands from keyPressEvent
  * into movements of the hero. Also takes into account if a tempFence or enemy is hit
  */
@@ -648,7 +648,7 @@ void gameboard::update_hero(int x, int y, int nx, int ny){
     }
 }
 
-/* @function pause_game
+/** @function pause_game
  * @brief stops all movements on the gameboard, opens pause window
  */
 void gameboard::pause_game(){
@@ -662,7 +662,7 @@ void gameboard::pause_game(){
     hide();
 }
 
-/* @function execute_move
+/** @function execute_move
  * @brief this uses the timer that is setup in main to determine when hero and enemies move positions
  */
 void gameboard::execute_move(int hero_move){
@@ -693,7 +693,7 @@ void gameboard::execute_move(int hero_move){
     }
 }
 
-/* @function you_died
+/** @function you_died
  * @brief when called, hero will lose a life or game will end if there are zero lives remaining
  * @param attacker will do different things depending on which enemy is hit
  * determines which hero power up can be used
@@ -757,7 +757,7 @@ void gameboard::you_died(QString attacker){
     labels[0]->setHero();
 }
 
-/* @function add_sheep
+/** @function add_sheep
  * @brief adds a new sheep character to a random position on the board
  */
 void gameboard::add_sheep(){
@@ -800,7 +800,7 @@ void gameboard::add_sheep(){
     }
 }
 
-/* @function add_snake
+/** @function add_snake
  * @brief adds a new snake to a random position on the board
  */
 void gameboard::add_snake(){
@@ -842,7 +842,7 @@ void gameboard::add_snake(){
     labels[y*board_size+x]->setSnake();
 }
 
-/* @function move_snake
+/** @function move_snake
  * @brief moves the snake in a direction on the board where there is fence
  * @param isSmart if true, snake will be smart and move towards the hero
  */
@@ -1019,7 +1019,7 @@ void gameboard::move_snake(){
     }
 }
 
-/* @function move_sheep
+/** @function move_sheep
  * @brief moves sheep in the direction it is headed to an open grass spot, also will bounce off fence
  */
 void gameboard::move_sheep(){
@@ -1158,7 +1158,7 @@ void gameboard::move_sheep(){
     }
 }
 
-/* @function next_move
+/** @function next_move
  * @brief determines the speed of movements of all moving parts on the gameboard
  */
 void gameboard::next_move(){
@@ -1209,10 +1209,17 @@ void gameboard::next_move(){
     }
 }
 
-/* @function finsh_fence
+/** @function finish_fence
  * @brief when a tempFence is completec by landing back on a fence, the tempfence is turned into regualar fence
  */
 void gameboard::finish_fence(){
+
+    //changes all tempFences to normal fence
+    //removes all tempFences from vector
+    for(auto i : current_fence)
+        labels[i.ry()*board_size+(i.rx())]->setFence();
+    current_fence.clear();
+
 
     int size = current_fence.size();
 
@@ -1229,167 +1236,62 @@ void gameboard::finish_fence(){
 
     // checks to see if progress reached
     check_progress();
-
-    //changes all tempFences to normal fence
-    //removes all tempFences from vector
-    for(auto i : current_fence)
-        labels[i.ry()*board_size+(i.rx())]->setFence();
-    current_fence.clear();
 }
 
-/* @function fill_fence
+/** @function fill_fence
  * @brief this funciton uses a very complicated and "if-else" heavy syntax to fill fence inside of newly completed fence
  */
 void gameboard::fill_fence(){
 
-    // creates a vector of 1's with one indicie per spot on board
-    // do for left side
-    inside.resize(board_size*board_size);
-    std::fill(inside.begin(), inside.end(), 1);
+    // sets up variables
+    bool is_inside = false;
+    int x_small, x_large, y_small, y_large;
 
+    curr_fence_start = current_fence[0];
+    curr_fence_end = current_fence[current_fence.size()-1];
 
-    int column, row;
-
-    // finds which is smaller to find range
-    int x_smallest, x_largest, y_smallest, y_largest;
-
-    if (curr_fence_start.rx() <= curr_fence_end.rx()){
-        x_smallest = curr_fence_start.rx();
-        x_largest = curr_fence_end.rx();
+    if (curr_fence_start.rx() >= curr_fence_end.rx()){
+        x_large = curr_fence_start.rx();
+        x_small = curr_fence_end.rx();
     }
     else{
-        x_smallest = curr_fence_end.rx();
-        x_largest = curr_fence_start.rx();
+        x_small = curr_fence_start.rx();
+        x_large = curr_fence_end.rx();
     }
 
-    if (curr_fence_start.ry() <= curr_fence_end.ry()){
-        y_smallest = curr_fence_start.ry();
-        y_largest = curr_fence_end.ry();
+    if (curr_fence_start.ry() >= curr_fence_end.ry()){
+        y_large = curr_fence_start.ry();
+        y_small = curr_fence_end.ry();
     }
     else{
-        y_smallest = curr_fence_end.ry();
-        y_largest = curr_fence_start.ry();
+        y_small = curr_fence_start.ry();
+        y_large = curr_fence_end.ry();
     }
 
-    bool run_top = true;
-    bool run_bottom = true;
-    bool run_left = true;
-    bool run_right = true;
 
-    // do this if the start and end of the fence are on opposite sides of the board
+    // runs through the entire board row by row
+    for (int row = 1; row < board_size-1; ++row){
 
 
-    // if goes from left to right or vice-versa
-    if(fence_start_direc == 4 && fence_end_direc == 6|| fence_start_direc == 6 && fence_end_direc == 4){
+        // checks how to initialize is_inside
+        if (row > y_small && row < y_large && x_small == 1)
+                is_inside = true;
+        else
+            is_inside = false;
 
-        // check if it should fill in above or below
-        //if (hero_pos->ry() > board_size/2)
-            //run_bottom = false;
-        //else
-            //run_top = false;
-    }
-    // else if goes from top to botom or vice-versa
-    else if(fence_start_direc == 2 && fence_end_direc == 8 || fence_start_direc == 8 && fence_end_direc == 2){
 
-        // check if it should fill in to the left or the right
-            //if (hero_pos->rx() > board_size/2)
-                //run_right = false;
-           // else
-                //run_left = false;
-    }
+        for (int column = 1; column < board_size-1; ++column){
 
-        // no run through all four directions if we need to
-    if(run_left){
-        // left side
-        for (int row = 1; row < board_size; ++row){
-
-            // if not in between start and finish of current fence
-            if (!(row >= y_smallest && row <= y_largest) || (x_smallest != 0 && x_largest != 0)){
-
-                column = 1;
-
-                // delete from vector until a temp fence is reached
-                while (labels[row*board_size+column]->continue_run() && column < board_size - 1){
-                    inside[row*board_size+column] = 0;
-                    ++column;
-                }
+            if (labels[row*board_size + column]->isTempFence() && labels[row*board_size+column+1]->isFilled()){
+                if (is_inside)
+                    is_inside = false;
+                else
+                    is_inside = true;
             }
-        }
-    }
 
-    if(run_right){
-        // right side
-        for (int row = 1; row < board_size; ++row){
-
-            // if not in between start and finish of current fence
-            if (!(row >= y_smallest && row <= y_largest) || (x_smallest != board_size-1 && x_largest != board_size-1)){
-
-                column = board_size - 2;
-
-
-                // delete from vector until a temp fence is reached
-                while (labels[row*board_size+column]->continue_run() && column > 0){
-                    inside[row*board_size+column] = 0;
-                    --column;
-                }
-            }
-        }
-    }
-
-    if (run_top){
-        // top side
-        for (int column = 1; column < board_size; ++column){
-
-            // if not in between start and finish of current fence
-            if (!(column >= x_smallest && column <= x_largest) || (y_smallest != 0 && y_largest != 0)){
-
-                row = 1;
-
-                // delete from vector until a temp fence is reached
-                while (labels[row*board_size+column]->continue_run() && row < board_size - 1){
-                    inside[row*board_size+column] = 0;
-                    ++row;
-                }
-            }
-        }
-    }
-
-    if (run_bottom){
-        // from bottom
-        for (int column = 1; column < board_size; ++column){
-
-            // if not in between start and finish of current fence
-            if (!(column >= x_smallest && column <= x_largest) || (y_smallest != board_size-1 && y_largest != board_size-1)){
-
-                row = board_size - 2;
-
-                while (labels[row*board_size+column]->continue_run() && row > 0 && column > 0){
-                    inside[row*board_size+column] = 0;
-                    --row;
-                }
-            }
-        }
-    }
-
-
-
-    bool contains_sheep = false;
-
-    for (size_t i = 0; i < inside.size(); ++i){
-        if (inside[i]){
-            if (labels[i]->isSheep())
-                contains_sheep = true;
-        }
-    }
-
-    // only fills in if there is not a sheep in the new area
-    if (!contains_sheep){
-        for (int i = 0; i < board_size*board_size; ++i){
-            if (inside[i] && !labels[i]->isHero() && !labels[i]->isSnake() && !labels[i]->isFence()){
-                labels[i]->setFence();
-                // add to the progress
-                ++progress;
-            }
+            // sets fences
+            if (is_inside)
+                labels[row*board_size + column]->setFence();
         }
     }
 
@@ -1400,7 +1302,7 @@ void gameboard::fill_fence(){
     inside.clear();
 }
 
-/* @function sheep_hit_hero
+/** @function sheep_hit_hero
  * @brief will call the you_died function unless a hero superpower is used
  */
 void gameboard::sheep_hit_hero(int index){
@@ -1438,14 +1340,14 @@ void gameboard::sheep_hit_hero(int index){
         you_died("sheep");
 }
 
-/* @function sheep_hit_fence
+/** @function sheep_hit_fence
  * @brief calls the you_died fucntion and destroys the tempfence unless a hero superpower is used
  */
 void gameboard::sheep_hit_fence(int iter){
     // sets random generation
     std::uniform_int_distribution<int> distribution(0,2);
     int chance = distribution(generator);
-/*
+/**
     int hit_spot;
 
     // get index of where sheep hit
@@ -1496,7 +1398,7 @@ void gameboard::sheep_hit_fence(int iter){
         you_died("sheep");
 }
 
-/* @function snake_hit_hero
+/** @function snake_hit_hero
  * @brief calls you_died function unless a hero superpower is used
  */
 void gameboard::snake_hit_hero(){
@@ -1514,7 +1416,7 @@ void gameboard::snake_hit_hero(){
         you_died("snake");
 }
 
-/* @function update_nums
+/** @function update_nums
  * @brief updates the QLabels in the gameboard corresponding to the score and the level progress
  */
 void gameboard::update_nums(){
@@ -1529,7 +1431,7 @@ void gameboard::update_nums(){
     prog_label->setText(new_prog_str);
 }
 
-/* @function unpause
+/** @function unpause
  * @brief resumes the game, is called when the unpause button is presssed
  */
 void gameboard::unpause(){
@@ -1540,7 +1442,7 @@ void gameboard::unpause(){
 }
 
 
-/* @function check_progress
+/** @function check_progress
  * @brief does nothing unless progress of 75% is reached, then calls level complete
  */
 void gameboard::check_progress(){
@@ -1554,7 +1456,7 @@ void gameboard::check_progress(){
 }
 
 
-/* @function next_level
+/** @function next_level
  * @brief sets up the gameboard to be ready for the next level in the game
  */
 void gameboard::next_level(){
@@ -1578,7 +1480,7 @@ void gameboard::next_level(){
 }
 
 
-/* @function play_game
+/** @function play_game
  * @brief called when new game is started. sets up first level of the game
  */
 void gameboard::play_game(){

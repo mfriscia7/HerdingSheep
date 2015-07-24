@@ -62,21 +62,21 @@ add_new_score::add_new_score(QWidget *parent) : QWidget(parent){
     setLayout(layout);
 }
 
-/* @function setconfirmbutton
+/** @function setconfirmbutton
  * @brief sets the member variable to a confirm score button so that it can be called by the gameboard
  */
 void add_new_score::setconfirmbutton(QPushButton* p){
     confirm = p;
 }
 
-/* @function play_button
+/** @function play_button
  * @brief returns play button so that main can access it
  */
 QPushButton* add_new_score::confirm_button(){
     return confirm;
 }
 
-/* @function confirm score
+/** @function confirm score
  * @brief when confirm button is pressed, this function will reset high score file with new high score
  */
 void add_new_score::confirm_score(){

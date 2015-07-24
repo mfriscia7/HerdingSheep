@@ -31,14 +31,14 @@ level_complete::level_complete(QWidget *parent) : QWidget(parent){
     setLayout(layout);
 }
 
-/* @function setconfirmbutton
+/** @function setconfirmbutton
  * @brief sets the member variable to a confirm button so that it can be called by the gameboard
  */
 void level_complete::setconfirmbutton(QPushButton* p){
     confirm = p;
 }
 
-/* @function play_button
+/** @function play_button
  * @brief returns play button so that main can access it
  */
 QPushButton* level_complete::confirm_button(){
