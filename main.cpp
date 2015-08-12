@@ -27,9 +27,10 @@ int main(int argc, char *argv[])
     QTextStream in(&inst_file);
     inst_file.open(QFile::ReadOnly | QFile::Text);
     QLabel *instruction = new QLabel(in.readAll());
+    inst_file.close();
 
     //sets the look of the Instruction window
-    instruction->setFixedSize(400,500);
+    instruction->setFixedSize(410,500);
     instruction->setWordWrap(true);
     instruction->setMargin(5);
     instruction->setWindowTitle("Instructions");
@@ -65,6 +66,7 @@ int main(int argc, char *argv[])
     //connects buttons for score pages at the end
     QObject::connect(score_window->confirm_button(), SIGNAL(clicked()), score_window, SLOT(confirm_score()));
     QObject::connect(score_window->confirm_button(), SIGNAL(clicked()), mm, SLOT(show()));
+    QObject::connect(score_window->confirm_button(), SIGNAL(clicked()), g, SLOT(clear_board_slot()));
     QObject::connect(score_window->confirm_button(), SIGNAL(clicked()), mm, SLOT(update_high_scores()));
     QObject::connect(game_over_window->no_button(), SIGNAL(clicked()), mm, SLOT(show()));
     QObject::connect(game_over_window->no_button(), SIGNAL(clicked()), game_over_window, SLOT(hide()));

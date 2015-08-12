@@ -35,7 +35,8 @@ FORMS    += mainwindow.ui
 
 RESOURCES += \
     pics.qrc \
-    highscores.qrc \
     instructions.qrc
 
 CONFIG += c++11
+
+DISTFILES +=

@@ -7,6 +7,9 @@ QSquare::QSquare(){
     sheep = false;
     hero = false;
     snake = false;
+    // fill_flag is only set to true by check_fill method
+    // to mark which spots have already been checked
+    fill_flag = false;
 }
 
 /*** @function setFence
@@ -18,6 +21,7 @@ void QSquare::setFence(){
     tempFence = false;
     hero = false;
     snake = false;
+    fill_flag = false;
     setPixmap(QPixmap(":/pics/fence.jpg").scaled(29,29,Qt::KeepAspectRatio));
 }
 
@@ -47,6 +51,7 @@ void QSquare::setGrass(){
     hero = false;
     sheep = false;
     tempFence = false;
+    fill_flag = false;
     setPixmap(QPixmap(":/pics/grass.jpg").scaled(29,29,Qt::KeepAspectRatio));
 }
 
@@ -68,6 +73,14 @@ void QSquare::setTempFence(){
     tempFence = true;
     hero = false;
     setPixmap(QPixmap(":/pics/fence.jpg").scaled(29,29,Qt::KeepAspectRatio));
+}
+
+/** @function flag_for_fill
+ * @brief sets the fill_flag variable to true so that the check_fill
+ *  knows that this spot has already been checked
+ */
+void QSquare::flag_for_fill(){
+    fill_flag = true;
 }
 
 

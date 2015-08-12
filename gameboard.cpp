@@ -290,10 +290,13 @@ void gameboard::setlevelwindow(level_complete *l){
  */
 void gameboard::initialize_board(){
 
-    //resets lives counter
-    lives_remaining = 3;
-    for(size_t i=0; i < lives_remaining; ++i)
-        lives[i]->setPixmap(*hero_r_text);
+    // only resets if just starting
+    if (curr_level == 0){
+        //resets lives counter
+        lives_remaining = 3;
+        for(size_t i=0; i < lives_remaining; ++i)
+            lives[i]->setPixmap(*hero_r_text);
+    }
 
     // stops movemenets
     move = false;
@@ -553,7 +556,7 @@ void gameboard::update_hero(int x, int y, int nx, int ny){
                 fence_end_direc = 4;
                 labels[y*board_size+x]->setTempFence();
                 current_fence.push_back(QPoint(x,y));
-                finish_fence();
+                finish_fence(x,y-1,x,y+1);
             }
             //going right
             else if (nx > x){
@@ -562,12 +565,12 @@ void gameboard::update_hero(int x, int y, int nx, int ny){
                 fence_end_direc = 6;
                 labels[y*board_size+x]->setTempFence();
                 current_fence.push_back(QPoint(x,y));
-                finish_fence();
+                finish_fence(x,y-1,x,y+1);
             }
             //going up or down, keeps same direction as before the move
             else{
                 if (current_fence.size() > 0)
-                    finish_fence();
+                    finish_fence(x-1,y,x+1,y);
                 if(direction == -1){
                     labels[ny*board_size+nx]->setPixmap(QPixmap(*hero_fence_l_text).scaled(29,29,Qt::KeepAspectRatio));
                     labels[y*board_size+x]->setTempFence();
@@ -576,7 +579,7 @@ void gameboard::update_hero(int x, int y, int nx, int ny){
                         fence_end_direc = 8;
                     else
                         fence_end_direc = 2;
-                    finish_fence();
+                    finish_fence(x-1,y,x+1,y);
                 }
                 else{
                     labels[ny*board_size+nx]->setPixmap(QPixmap(*hero_fence_r_text).scaled(29,29,Qt::KeepAspectRatio));
@@ -586,7 +589,7 @@ void gameboard::update_hero(int x, int y, int nx, int ny){
                         fence_end_direc = 8;
                     else
                         fence_end_direc = 2;
-                    finish_fence();
+                    finish_fence(x-1,y,x+1,y);
                 }
 
 
@@ -1211,8 +1214,16 @@ void gameboard::next_move(){
 
 /** @function finish_fence
  * @brief when a tempFence is completec by landing back on a fence, the tempfence is turned into regualar fence
+ * @param: first x and y corresponds to the starting point of the first fill in, second x and y for the second
  */
-void gameboard::finish_fence(){
+void gameboard::finish_fence(int first_x, int first_y, int second_x, int second_y){
+
+    int size = current_fence.size();
+
+    // only set to true in check if fill fence
+    sheep_or_snake = false;
+    animal_in_pool1 = false;
+    animal_in_pool2 = false;
 
     //changes all tempFences to normal fence
     //removes all tempFences from vector
@@ -1220,12 +1231,43 @@ void gameboard::finish_fence(){
         labels[i.ry()*board_size+(i.rx())]->setFence();
     current_fence.clear();
 
+    // check which is inside and which is outside
+    // true and false refers to which vector to place points in
+    if (size > 0){
+        check_if_fill(first_x, first_y, true);
+        check_if_fill(second_x, second_y, false);
+    }
 
-    int size = current_fence.size();
+    // check which pool will be used
+    if (first_pool.size() < second_pool.size())
+        sheep_or_snake = animal_in_pool1;
+    else
+        sheep_or_snake = animal_in_pool2;
 
-    // fills in the fence
-    if (size > 0)
-        fill_fence();
+    if (!sheep_or_snake){
+        // fills fence according to which is smaller: pool_1 or pool_2
+        if (first_pool.size() < 100 || second_pool.size() < 100){
+            if (first_pool.size() < second_pool.size()){
+                fill_fence(first_pool);
+                size += first_pool.size();
+            }
+            else{
+                fill_fence(second_pool);
+                size += second_pool.size();
+            }
+        }
+    }
+
+    // empty the vectors once done
+    first_pool.clear();
+    second_pool.clear();
+
+    // clears all labels of flag
+    for(int i=0;i<board_size;i++){
+        for(int j=0;j<board_size;j++){
+            labels[i*board_size+j]->reset_flag();
+        }
+    }
 
     // change the progress and score
     progress += size;
@@ -1238,68 +1280,153 @@ void gameboard::finish_fence(){
     check_progress();
 }
 
-/** @function fill_fence
- * @brief this funciton uses a very complicated and "if-else" heavy syntax to fill fence inside of newly completed fence
+/** @function check_if_fill
+ * @brief this takes an x and a y coordinate as input, adds this point to
+ *  a queue. Then runs through queue and adds to the pool vector to be filled
+ *  if it is not already a pool. Adds spots to queue in while loop
  */
-void gameboard::fill_fence(){
+void gameboard::check_if_fill(int x, int y, bool is_first){
 
-    // sets up variables
-    bool is_inside = false;
-    int x_small, x_large, y_small, y_large;
+    int n_x, n_y;
 
-    curr_fence_start = current_fence[0];
-    curr_fence_end = current_fence[current_fence.size()-1];
+    if (is_first){
 
-    if (curr_fence_start.rx() >= curr_fence_end.rx()){
-        x_large = curr_fence_start.rx();
-        x_small = curr_fence_end.rx();
-    }
-    else{
-        x_small = curr_fence_start.rx();
-        x_large = curr_fence_end.rx();
-    }
+        // first make sure that the queue is empty
+        if (!first_queue.isEmpty())
+            first_queue.clear();
 
-    if (curr_fence_start.ry() >= curr_fence_end.ry()){
-        y_large = curr_fence_start.ry();
-        y_small = curr_fence_end.ry();
-    }
-    else{
-        y_small = curr_fence_start.ry();
-        y_large = curr_fence_end.ry();
-    }
+        if (!labels[y*board_size+x]->isFilled())
+            first_queue.enqueue(QPoint(x,y));
 
+        while(!first_queue.isEmpty()){
 
-    // runs through the entire board row by row
-    for (int row = 1; row < board_size-1; ++row){
+            // take first off of the queue
+            QPoint next_spot = first_queue.dequeue();
+            n_x = next_spot.rx();
+            n_y = next_spot.ry();
 
+            // flags the spot as checked by this method
+            labels[y*board_size+x]->flag_for_fill();
 
-        // checks how to initialize is_inside
-        if (row > y_small && row < y_large && x_small == 1)
-                is_inside = true;
-        else
-            is_inside = false;
+            // add the processed QPoint to the vector to be filled
+            first_pool.push_back(QPoint(n_x,n_y));
 
+            // check left
+            if ((n_x-1) >= 0 && labels[n_y*board_size+(n_x-1)]->notFillorFlagged()){
+                first_queue.enqueue(QPoint(n_x-1,n_y));
+                // flags the spot as checked by this method
+                labels[n_y*board_size+(n_x-1)]->flag_for_fill();
 
-        for (int column = 1; column < board_size-1; ++column){
-
-            if (labels[row*board_size + column]->isTempFence() && labels[row*board_size+column+1]->isFilled()){
-                if (is_inside)
-                    is_inside = false;
-                else
-                    is_inside = true;
+                if (labels[n_y*board_size+(n_x-1)]->isAnimal())
+                    animal_in_pool1 = true;
             }
 
-            // sets fences
-            if (is_inside)
-                labels[row*board_size + column]->setFence();
+            // check down
+            if ((n_y+1) < board_size && labels[(n_y+1)*board_size+n_x]->notFillorFlagged()){
+                first_queue.enqueue(QPoint(n_x,n_y+1));
+                // flags the spot as checked by this method
+                labels[(n_y+1)*board_size+n_x]->flag_for_fill();
+
+                if (labels[(n_y+1)*board_size+n_x]->isAnimal())
+                    animal_in_pool1 = true;
+            }
+
+            // check right
+            if ((n_x+1) < board_size && labels[n_y*board_size+(n_x+1)]->notFillorFlagged()){
+                first_queue.enqueue(QPoint(n_x+1,n_y));
+                // flags the spot as checked by this method
+                labels[n_y*board_size+(n_x+1)]->flag_for_fill();
+
+                if (labels[n_y*board_size+(n_x+1)]->isAnimal())
+                    animal_in_pool1 = true;
+            }
+
+            // check up
+            if ((n_y-1) >= 0 && labels[(n_y-1)*board_size+n_x]->notFillorFlagged()){
+                first_queue.enqueue(QPoint(n_x,n_y-1));
+                // flags the spot as checked by this method
+                labels[(n_y-1)*board_size+n_x]->flag_for_fill();
+
+                if (labels[(n_y-1)*board_size+n_x]->isAnimal())
+                    animal_in_pool1 = true;
+            }
         }
     }
+    else{
+        // first make sure the queue is empty
+        if (!second_queue.isEmpty())
+            second_queue.clear();
 
-    // updates the porgress and the score
+        if (!labels[y*board_size+x]->isFilled())
+            second_queue.enqueue(QPoint(x,y));
+
+        while (!second_queue.isEmpty()){
+
+            //take first off of the queue
+            QPoint next_spot = second_queue.dequeue();
+            n_x = next_spot.rx();
+            n_y = next_spot.ry();
+
+            // flags the spot as checked by this method
+            labels[y*board_size+x]->flag_for_fill();
+
+            // add the processed QPoint to the vector to be filled
+            second_pool.push_back(QPoint(n_x,n_y));
+
+            // check left
+            if (n_x > 1 && labels[n_y*board_size+(n_x-1)]->notFillorFlagged()){
+                second_queue.enqueue(QPoint(n_x-1,n_y));
+                // flags the spot as checked by this method
+                labels[n_y*board_size+(n_x-1)]->flag_for_fill();
+
+                if (labels[n_y*board_size+(n_x-1)]->isAnimal())
+                    animal_in_pool2 = true;
+            }
+
+            // check down
+            if (n_y+1 < board_size && labels[(n_y+1)*board_size+n_x]->notFillorFlagged()){
+                second_queue.enqueue(QPoint(n_x,n_y+1));
+                // flags the spot as checked by this method
+                labels[(n_y+1)*board_size+n_x]->flag_for_fill();
+
+                if (labels[(n_y+1)*board_size+n_x]->isAnimal())
+                    animal_in_pool2 = true;
+            }
+
+            // check right
+            if (n_x < board_size && labels[n_y*board_size+(n_x+1)]->notFillorFlagged()){
+                second_queue.enqueue(QPoint(n_x+1,n_y));
+                // flags the spot as checked by this method
+                labels[n_y*board_size+(n_x+1)]->flag_for_fill();
+
+                if (labels[n_y*board_size+(n_x+1)]->isAnimal())
+                    animal_in_pool2 = true;
+            }
+
+            // check up
+            if (n_y > 1 && labels[(n_y-1)*board_size+n_x]->notFillorFlagged()){
+                second_queue.enqueue(QPoint(n_x,n_y-1));
+                // flags the spot as checked by this method
+                labels[(n_y-1)*board_size+n_x]->flag_for_fill();
+
+                if (labels[(n_y-1)*board_size+n_x]->isAnimal())
+                    animal_in_pool2 = true;
+            }
+        }
+    }
+}
+
+/** @function fill_fence
+ * @brief this funciton takes a vector of QPoint's as input and sets each QPoint to a fence type
+ */
+void gameboard::fill_fence(std::vector<QPoint> fill_v){
+
+    // fills fence in spots in the vector
+    for(auto i : fill_v)
+        labels[i.ry()*board_size+(i.rx())]->setFence();
+
+    // updates the progress and the score
     update_nums();
-
-    // empty vectors
-    inside.clear();
 }
 
 /** @function sheep_hit_hero
@@ -1441,7 +1568,6 @@ void gameboard::unpause(){
     show();
 }
 
-
 /** @function check_progress
  * @brief does nothing unless progress of 75% is reached, then calls level complete
  */
@@ -1454,7 +1580,6 @@ void gameboard::check_progress(){
         hide();
     }
 }
-
 
 /** @function next_level
  * @brief sets up the gameboard to be ready for the next level in the game
@@ -1478,7 +1603,6 @@ void gameboard::next_level(){
         next_level();
     }
 }
-
 
 /** @function play_game
  * @brief called when new game is started. sets up first level of the game

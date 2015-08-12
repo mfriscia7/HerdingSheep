@@ -29,6 +29,8 @@
 #include <random>
 #include <chrono>
 
+#include <QQueue>
+
 class MainWindow;
 
 class gameboard : public QWidget
@@ -53,6 +55,9 @@ public slots:
     void set_german();
     void set_dach();
     void set_wolf();
+    void clear_board_slot(){
+        clear_board();
+    }
 
 public:
     explicit gameboard(QWidget *parent = 0);
@@ -68,8 +73,9 @@ public:
     void update_nums();
     void check_progress();
 
-    void finish_fence();
-    void fill_fence();
+    void finish_fence(int first_x, int first_y, int second_x, int second_y);
+    void fill_fence(std::vector<QPoint> fill_v);
+    void check_if_fill(int x, int y, bool is_first);
 
     void snake_hit_hero();
     void sheep_hit_hero(int index);
@@ -94,6 +100,7 @@ public:
 
     void pause_game();
     void clear_board();
+
 
 private:
     QWidget *Top;
@@ -145,7 +152,13 @@ private:
     int sheep_hit_x;
     int sheep_hit_y;
 
+    bool sheep_or_snake;
+    bool animal_in_pool1;
+    bool animal_in_pool2;
+
     std::vector<QPoint> current_fence;
+    std::vector<QPoint> first_pool;
+    std::vector<QPoint> second_pool;
 
     // used for keeping track of current_fence index when sheep hits fence
     int right_half;
@@ -170,6 +183,10 @@ private:
     level_complete *level_win;
 
     int smallest_score;
+
+    //queues for implementing the flood fill algorithm
+    QQueue<QPoint> first_queue;
+    QQueue<QPoint> second_queue;
 };
 
 #endif // GAMEBOARD

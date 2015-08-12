@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), lowest_score(0)
@@ -28,20 +29,42 @@ MainWindow::MainWindow(QWidget *parent) :
     scores_title->setFont(scores_font);
 
     //High Scores
+    QFile file("high_scores.txt");
+
+    // if the file does not exist, create it
+    if (!file.exists()){
+        QTextStream out(&file);
+        file.open(QFile::WriteOnly | QFile::Text);
+        out << "1. ---\n";
+        out << "0\n";
+        out << "2. ---\n";
+        out << "0\n";
+        out << "3. ---\n";
+        out << "0\n";
+        out << "4. ---\n";
+        out << "0\n";
+        out << "5. ---\n";
+        out << "0\n";
+
+        file.close();
+    }
+
     //names
-    QFile file(":/high_scores/high_scores.txt");
     QTextStream in(&file);
-    file.open(QFile::ReadOnly | QFile::Text);
-    first_name = new QLabel(in.readLine());
-    first_score = new QLabel(in.readLine());
-    second_name = new QLabel(in.readLine());
-    second_score = new QLabel(in.readLine());
-    third_name = new QLabel(in.readLine());
-    third_score = new QLabel(in.readLine());
-    fourth_name = new QLabel(in.readLine());
-    fourth_score = new QLabel(in.readLine());
-    fifth_name = new QLabel(in.readLine());
-    fifth_score = new QLabel(in.readLine());
+    if (file.open(QFile::ReadOnly | QFile::Text)){
+        first_name = new QLabel(in.readLine());
+        first_score = new QLabel(in.readLine());
+        second_name = new QLabel(in.readLine());
+        second_score = new QLabel(in.readLine());
+        third_name = new QLabel(in.readLine());
+        third_score = new QLabel(in.readLine());
+        fourth_name = new QLabel(in.readLine());
+        fourth_score = new QLabel(in.readLine());
+        fifth_name = new QLabel(in.readLine());
+        fifth_score = new QLabel(in.readLine());
+    } else{
+        qDebug() << file.errorString();
+    }
 
     file.close();
 
@@ -258,7 +281,8 @@ void MainWindow::connect_hero(){
 void MainWindow::update_high_scores(){
 
     // gets all the names and high scores in QStrings
-    QFile file(":/high_scores/high_scores.txt");
+    QFile file("./high_scores.txt");
+
     QTextStream in(&file);
     file.open(QFile::ReadOnly | QFile::Text);
 

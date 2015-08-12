@@ -1,23 +1,25 @@
 #include "add_new_score.h"
+#include <QDebug>
+
 
 // constructor
 add_new_score::add_new_score(QWidget *parent) : QWidget(parent){
 
     //High Scores
     //names
-    file.setFileName(":/high_scores/high_scores.txt");
+    file.setFileName("high_scores.txt");
     QTextStream in(&file);
     file.open(QFile::ReadOnly | QFile::Text);
 
-    first_name = new QString(in.readLine());
+    first_name = in.readLine().split(" ")[1];
     QString *first = new QString(in.readLine());
-    second_name = new QString(in.readLine());
+    second_name = in.readLine().split(" ")[1];
     QString *second = new QString(in.readLine());
-    third_name = new QString(in.readLine());
+    third_name = in.readLine().split(" ")[1];
     QString *third = new QString(in.readLine());
-    fourth_name = new QString(in.readLine());
+    fourth_name = in.readLine().split(" ")[1];
     QString *fourth = new QString(in.readLine());
-    fifth_name = new QString(in.readLine());
+    fifth_name = in.readLine().split(" ")[1];
     QString *fifth = new QString(in.readLine());
 
     file.close();
@@ -48,9 +50,9 @@ add_new_score::add_new_score(QWidget *parent) : QWidget(parent){
     header->setFont(header_font);
 
     // box where player can input text
-    QInputDialog *name_here = new QInputDialog();
+    name_here = new QInputDialog();
     name_here->setOption(QInputDialog::NoButtons);
-    name_here->setLabelText("Type your name below to save high score:");
+    name_here->setLabelText("Type your name below to save high score (no spaces):");
 
     // enter button to return to home screen
     QPushButton *confirm = new QPushButton("Confirm");
@@ -81,74 +83,79 @@ QPushButton* add_new_score::confirm_button(){
  */
 void add_new_score::confirm_score(){
 
+    name_text = name_here->textValue().split(" ")[0];
+
     //opens the file to write to
-    //QFile file(":/high_scores/high_scores.txt");
+    //QFile file("high_scores.txt");
     //truncate will clear the file so it can be rewritten
-    file.open(QFile::ReadWrite | QFile::Truncate | QFile::Text);
-    QTextStream out(&file);
+    file.setFileName("high_scores.txt");
 
-    if (score_num > first_score){
-        out << "1. " << name_text << "\n";
-        out << score_num;
-        out << "2. " << first_name << "\n";
-        out << first_score;
-        out << "3. " << second_name << "\n";
-        out << second_score;
-        out << "4. " << third_name << "\n";
-        out << third_score;
-        out << "5. " << fourth_name << "\n";
-        out << fourth_score;
+    if (file.open(QFile::WriteOnly | QFile::Truncate | QFile::Text)){
+        QTextStream out(&file);
+        if (score_num > first_score){
+            out << "1. " << name_text << "\n";
+            out << score_num << "\n";
+            out << "2. " << first_name << "\n";
+            out << first_score << "\n";
+            out << "3. " << second_name << "\n";
+            out << second_score << "\n";
+            out << "4. " << third_name << "\n";
+            out << third_score << "\n";
+            out << "5. " << fourth_name << "\n";
+            out << fourth_score;
+        }
+        else if(score_num > second_score){
+            out << "1. " << first_name << "\n";
+            out << first_score << "\n";
+            out << "2. " << name_text << "\n";
+            out << score_num << "\n";
+            out << "3. " << second_name << "\n";
+            out << second_score << "\n";
+            out << "4. " << third_name << "\n";
+            out << third_score << "\n";
+            out << "5. " << fourth_name << "\n";
+            out << fourth_score;
+        }
+        else if(score_num > third_score){
+            out << "1. " << first_name << "\n";
+            out << first_score << "\n";
+            out << "2. " << second_name << "\n";
+            out << second_score << "\n";
+            out << "3. " << name_text << "\n";
+            out << score_num << "\n";
+            out << "4. " << third_name << "\n";
+            out << third_score << "\n";
+            out << "5. " << fourth_name << "\n";
+            out << fourth_score;
+        }
+        else if(score_num > fourth_score){
+            out << "1. " << first_name << "\n";
+            out << first_score << "\n";
+            out << "2. " << second_name << "\n";
+            out << second_score << "\n";
+            out << "3. " << third_name << "\n";
+            out << third_score << "\n";
+            out << "4. " << name_text << "\n";
+            out << score_num << "\n";
+            out << "5. " << fourth_name << "\n";
+            out << fourth_score;
+        }
+        else{
+            out << "1. " << first_name << "\n";
+            out << first_score << "\n";
+            out << "2. " << second_name << "\n";
+            out << second_score << "\n";
+            out << "3. " << third_name << "\n";
+            out << third_score << "\n";
+            out << "4. " << fourth_name << "\n";
+            out << fourth_score << "\n";
+            out << "5. " << name_text << "\n";
+            out << score_num;
+        }
+        file.close();
+    }else{
+        qDebug() << file.errorString();
     }
-    else if(score_num > second_score){
-        out << "1. " << first_name << "\n";
-        out << first_score;
-        out << "2. " << name_text << "\n";
-        out << score_num;
-        out << "3. " << second_name << "\n";
-        out << second_score;
-        out << "4. " << third_name << "\n";
-        out << third_score;
-        out << "5. " << fourth_name << "\n";
-        out << fourth_score;
-    }
-    else if(score_num > third_score){
-        out << "1. " << first_name << "\n";
-        out << first_score;
-        out << "2. " << second_name << "\n";
-        out << second_score;
-        out << "3. " << name_text << "\n";
-        out << score_num;
-        out << "4. " << third_name << "\n";
-        out << third_score;
-        out << "5. " << fourth_name << "\n";
-        out << fourth_score;
-    }
-    else if(score_num > fourth_score){
-        out << "1. " << first_name << "\n";
-        out << first_score;
-        out << "2. " << second_name << "\n";
-        out << second_score;
-        out << "3. " << third_name << "\n";
-        out << third_score;
-        out << "4. " << name_text << "\n";
-        out << score_num;
-        out << "5. " << fourth_name << "\n";
-        out << fourth_score;
-    }
-    else{
-        out << "1. " << first_name << "\n";
-        out << first_score;
-        out << "2. " << second_name << "\n";
-        out << second_score;
-        out << "3. " << third_name << "\n";
-        out << third_score;
-        out << "4. " << fourth_name << "\n";
-        out << fourth_score;
-        out << "5. " << name_text << "\n";
-        out << score_num;
-    }
-
-    file.close();
 
     // hides the new score window
     hide();

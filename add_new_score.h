@@ -34,12 +34,13 @@ private:
     int fourth_score;
     int fifth_score;
 
-    QString *first_name;
-    QString *second_name;
-    QString *third_name;
-    QString *fourth_name;
-    QString *fifth_name;
+    QString first_name;
+    QString second_name;
+    QString third_name;
+    QString fourth_name;
+    QString fifth_name;
 
+    QInputDialog *name_here;
     QPushButton *confirm;
 
 };
