@@ -50,6 +50,7 @@ void QSquare::setGrass(){
     fence = false;
     hero = false;
     sheep = false;
+    snake = false;
     tempFence = false;
     fill_flag = false;
     setPixmap(QPixmap(":/pics/grass.jpg").scaled(29,29,Qt::KeepAspectRatio));

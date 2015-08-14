@@ -103,6 +103,19 @@ void add_new_score::confirm_score(){
             out << third_score << "\n";
             out << "5. " << fourth_name << "\n";
             out << fourth_score;
+
+            fifth_name = fourth_name;
+            fourth_name = third_name;
+            third_name = second_name;
+            second_name = first_name;
+            first_name = name_text;
+
+            fifth_score = fourth_score;
+            fourth_score = third_score;
+            third_score = second_score;
+            second_score = first_score;
+            first_score = score_num;
+
         }
         else if(score_num > second_score){
             out << "1. " << first_name << "\n";
@@ -115,6 +128,16 @@ void add_new_score::confirm_score(){
             out << third_score << "\n";
             out << "5. " << fourth_name << "\n";
             out << fourth_score;
+
+            fifth_name = fourth_name;
+            fourth_name = third_name;
+            third_name = second_name;
+            second_name = name_text;
+
+            fifth_score = fourth_score;
+            fourth_score = third_score;
+            third_score = second_score;
+            second_score = score_num;
         }
         else if(score_num > third_score){
             out << "1. " << first_name << "\n";
@@ -127,6 +150,14 @@ void add_new_score::confirm_score(){
             out << third_score << "\n";
             out << "5. " << fourth_name << "\n";
             out << fourth_score;
+
+            fifth_name = fourth_name;
+            fourth_name = third_name;
+            third_name = name_text;
+
+            fifth_score = fourth_score;
+            fourth_score = third_score;
+            third_score = score_num;
         }
         else if(score_num > fourth_score){
             out << "1. " << first_name << "\n";
@@ -139,6 +170,12 @@ void add_new_score::confirm_score(){
             out << score_num << "\n";
             out << "5. " << fourth_name << "\n";
             out << fourth_score;
+
+            fifth_name = fourth_name;
+            fourth_name = name_text;
+
+            fifth_score = fourth_score;
+            fourth_score = score_num;
         }
         else{
             out << "1. " << first_name << "\n";
@@ -151,6 +188,10 @@ void add_new_score::confirm_score(){
             out << fourth_score << "\n";
             out << "5. " << name_text << "\n";
             out << score_num;
+
+            fifth_name = name_text;
+
+            fifth_score = score_num;
         }
         file.close();
     }else{

@@ -249,6 +249,23 @@ void gameboard::clear_board(){
     score_num = 0;
     destroy_fence_iter = 0;
 
+    //resets lives counter
+    lives_remaining = 3;
+    for(size_t i=0; i < lives_remaining; ++i)
+        lives[i]->setPixmap(*hero_r_text);
+
+    //resets the values of the QSquares
+    for(int i=0;i<board_size;i++){
+        for(int j=0;j<board_size;j++){
+
+            if(i==0 || j==0 || i==board_size-1 || j==board_size-1)
+                labels[i*board_size+j]->setFence();
+            else
+                labels[i*board_size+j]->setGrass();
+        }
+    }
+
+
     // resets top_bar
     update_nums();
 
@@ -289,7 +306,7 @@ void gameboard::setlevelwindow(level_complete *l){
  * @param curr_level determines which level is set up in the gameboard
  */
 void gameboard::initialize_board(){
-
+/*
     // only resets if just starting
     if (curr_level == 0){
         //resets lives counter
@@ -297,7 +314,7 @@ void gameboard::initialize_board(){
         for(size_t i=0; i < lives_remaining; ++i)
             lives[i]->setPixmap(*hero_r_text);
     }
-
+*/
     // stops movemenets
     move = false;
 
@@ -406,7 +423,7 @@ void gameboard::initialize_board(){
         add_snake();
         isSmart = true;
     }
-    // else game over, submit high score if a high score is reachest
+    // else game over, submit high score if a high score is reached
     else{
         //opens game over window
         //will let you submit name if new high score is reached
@@ -1246,14 +1263,25 @@ void gameboard::finish_fence(int first_x, int first_y, int second_x, int second_
 
     if (!sheep_or_snake){
         // fills fence according to which is smaller: pool_1 or pool_2
-        if (first_pool.size() < 100 || second_pool.size() < 100){
-            if (first_pool.size() < second_pool.size()){
+        // 175 max so that can't fill up too much in one fence
+        if (first_pool.size() <= 175 || second_pool.size() <= 175){
+
+            // first check if both sides are small enough to fill both and no animals in either side
+            if  (first_pool.size() <= 20 && second_pool.size() <= 20 && !animal_in_pool1 && !animal_in_pool2){
                 fill_fence(first_pool);
-                size += first_pool.size();
-            }
-            else{
                 fill_fence(second_pool);
-                size += second_pool.size();
+                size += (first_pool.size() + second_pool.size());
+            }
+            // normal fill in routine, only filling smaller of two pools
+            else{
+                if (first_pool.size() < second_pool.size()){
+                    fill_fence(first_pool);
+                    size += first_pool.size();
+                }
+                else{
+                    fill_fence(second_pool);
+                    size += second_pool.size();
+                }
             }
         }
     }
@@ -1474,49 +1502,6 @@ void gameboard::sheep_hit_fence(int iter){
     // sets random generation
     std::uniform_int_distribution<int> distribution(0,2);
     int chance = distribution(generator);
-/**
-    int hit_spot;
-
-    // get index of where sheep hit
-    for (size_t i = 1; i < current_fence.size(); ++i){
-        if ( current_fence[i].rx() == sheep_hit_x && current_fence[i].ry() == sheep_hit_y)
-            hit_spot = i;
-    }
-
-    labels[sheep_hit_y*board_size+sheep_hit_x]->setPixmap(QPixmap(":/pics/red.jpg").scaled(29,29,Qt::KeepAspectRatio));
-
-    // gets the next position in vector from both directions
-    right_half = hit_spot + iter;
-    left_half = hit_spot - iter;
-
-    // sets the pixmaps
-    if (right_half < current_fence.size()){
-
-        int rx = current_fence[right_half].rx();
-        int ry = current_fence[right_half].ry();
-        labels[ry*board_size+rx]->setPixmap(QPixmap(":/pics/red.jpg").scaled(29,29,Qt::KeepAspectRatio));
-
-        // if hit hero, lose a life. 1/3 chance of black lab avoiding it
-        if (labels[ry*board_size+rx]->isHero()){
-            if (*hero_l_text == ":/pics/black_lab.jpg" && chance ==0){return;}
-            you_died("sheep");
-            return;
-        }
-    }
-    if (left_half >= 0){
-
-        int lx = current_fence[left_half].rx();
-        int ly = current_fence[left_half].ry();
-        labels[ly*board_size+lx]->setPixmap(QPixmap(":/pics/red.jpg").scaled(29,29,Qt::KeepAspectRatio));
-
-        // if hit hero, lose a life. 1/3 chance of black lab avoiding it
-        if (labels[ly*board_size+lx]->isHero()){
-            if (*hero_l_text == ":/pics/black_lab.jpg" && chance ==0){return;}
-            you_died("sheep");
-            return;
-        }
-    }
-    */
 
     if (*hero_l_text == ":pics/black_lab.jpg" && chance == 0){
         // do nothing
