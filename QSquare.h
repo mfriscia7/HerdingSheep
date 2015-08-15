@@ -23,6 +23,7 @@ public:
     bool isSnake() {return snake;}
     bool isAnimal() {return sheep;}
     bool isTempFence() {return tempFence;}
+    bool isAnyFence() {return fence || tempFence;}
     bool notFillorFlagged() {return !fill_flag && !fence && !hero;}
 
     bool isFilled() {return (fence || sheep || snake || tempFence || hero);}

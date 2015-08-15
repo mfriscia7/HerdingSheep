@@ -5,7 +5,7 @@ std::default_random_engine generator (seed);
 
 //constructor for the gameboard object
 gameboard::gameboard(QWidget *parent) :
-    QWidget(parent), board_size(29), direction(1), curr_level(0), destroy_fence_iter(0), pick_char(0), move_less(0), move(false), sheep_on_fence(false), smallest_score(0), isSmart(0), score_num(0), progress(0)
+    QWidget(parent), board_size(29), direction(1), curr_level(0), pick_char(0), move_less(0), move(false), sheep_on_fence(false), smallest_score(0), isSmart(0), score_num(0), progress(0)
 {
     //sets the background to black
     setStyleSheet("background:black;");
@@ -255,7 +255,6 @@ void gameboard::clear_board(){
     isSmart = 0;
     progress = 0;
     score_num = 0;
-    destroy_fence_iter = 0;
 
     //resets lives counter
     lives_remaining = 3;
@@ -1015,7 +1014,14 @@ void gameboard::move_snake(){
 
         // changes squares on board
         labels[y*board_size+x]->setFence();
+
+        // see if hit hero
+        if (labels[(y+y_direc)*board_size+(x+x_direc)]->isHero()){
+            you_died("snake");
+        }
+
         labels[(y+y_direc)*board_size+(x+x_direc)]->setSnake();
+
 
         //make changes to the actual snake position
         snake_pos[i]->setX(x+x_direc);
@@ -1051,7 +1057,7 @@ void gameboard::move_sheep(){
             sheep_on_fence = true;
             sheep_hit_x = x+x_direc;
             sheep_hit_y = y+y_direc;
-            sheep_hit_fence(i);
+            sheep_hit_fence();
         }
         // then checks if the sheep is hitting the hero
         if (labels[(y+y_direc)*board_size + (x+x_direc)]->isHero() && (y+y_direc != 0 && y+y_direc != board_size-1 && x+x_direc != 0 && x+x_direc != board_size-1))
@@ -1194,27 +1200,22 @@ void gameboard::next_move(){
         // this occurs if sheep_hit_fence is called
         if (sheep_on_fence && move_less){
 
-            // this runs if this is the first second the sheep hits the fence
-            if (destroy_fence_iter == 0){
-
-                // finds index of where sheep hit
-                for (size_t i = 1; i < current_fence.size(); ++i){
-                    if ( current_fence[i].rx() == sheep_hit_x && current_fence[i].ry() == sheep_hit_y){
-                        right_half = i;
-                        left_half = i;
-                    }
+            // finds index of where sheep hit
+            for (size_t i = 1; i < current_fence.size(); ++i){
+                if ( current_fence[i].rx() == sheep_hit_x && current_fence[i].ry() == sheep_hit_y){
+                    right_half = i;
+                    left_half = i;
                 }
             }
 
             if (right_half >= 0 && right_half < current_fence.size() && left_half >= 0 && left_half < current_fence.size())
-                sheep_hit_fence(destroy_fence_iter);
+                sheep_hit_fence();
             else
                 sheep_on_fence = false;
 
         }
 
         ++move_less;
-        ++destroy_fence_iter;
     }
 }
 
@@ -1229,21 +1230,21 @@ void gameboard::finish_fence(int first_x, int first_y, int second_x, int second_
     // first checks where to have the anchor
     // where there is grass on either side of a tempfence spot
     // so that it can fill in best
-    if (labels[first_y*board_size+first_x]->isFence() || labels[second_y*board_size+second_x]->isFence() || labels[first_y*board_size+first_x]->isTempFence() || labels[second_y*board_size+second_x]->isTempFence()){
+    if (labels[first_y*board_size+first_x]->isAnyFence() || labels[second_y*board_size+second_x]->isAnyFence()){
 
         //find the spot in the tempFence where there is grass on two sides
         for (size_t i=0; i < current_fence.size();++i){
             int _x = current_fence[i].rx();
             int _y = current_fence[i].ry();
 
-            if (!labels[(_y+1)*board_size+_x]->isFence() && !labels[(_y-1)*board_size+_x]->isFence()){
+            if (!labels[(_y+1)*board_size+_x]->isAnyFence() && !labels[(_y-1)*board_size+_x]->isAnyFence()){
                 first_y = _y+1;
                 second_y = _y-1;
                 first_x = _x;
                 second_x = _x;
                 break;
             }
-            else if (!labels[_y*board_size+(_x+1)]->isFence() && !labels[_y*board_size+(_x-1)]->isFence()){
+            else if (!labels[_y*board_size+(_x+1)]->isAnyFence() && !labels[_y*board_size+(_x-1)]->isAnyFence()){
                 first_y = _y;
                 second_y = _y;
                 first_x = _x+1;
@@ -1517,16 +1518,17 @@ void gameboard::sheep_hit_hero(int index){
 /** @function sheep_hit_fence
  * @brief calls the you_died fucntion and destroys the tempfence unless a hero superpower is used
  */
-void gameboard::sheep_hit_fence(int iter){
+void gameboard::sheep_hit_fence(){
     // sets random generation
     std::uniform_int_distribution<int> distribution(0,2);
     int chance = distribution(generator);
 
     if (*hero_l_text == ":pics/black_lab.jpg" && chance == 0){
         // do nothing
+        return;
     }
-    else
-        you_died("sheep");
+
+    you_died("sheep");
 }
 
 /** @function snake_hit_hero

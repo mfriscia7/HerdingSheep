@@ -79,7 +79,7 @@ public:
 
     void snake_hit_hero();
     void sheep_hit_hero(int index);
-    void sheep_hit_fence(int iter);
+    void sheep_hit_fence();
 
     void you_died(QString attacker);
 
@@ -163,7 +163,6 @@ private:
     // used for keeping track of current_fence index when sheep hits fence
     int right_half;
     int left_half;
-    int destroy_fence_iter;
 
     int progress;
     int curr_level;
