@@ -167,6 +167,7 @@ private:
 
     int progress;
     int curr_level;
+    QLabel* level_num;
 
     // vectors to help fill in completed fence areas
     std::vector<int> inside;

@@ -121,12 +121,19 @@ gameboard::gameboard(QWidget *parent) :
     put_together->addWidget(Top,0,Qt::AlignCenter);
     put_together->addWidget(Board,0,Qt::AlignCenter);
 
+    //level number in the corner
+    level_num = new QLabel(QString::number(curr_level));
+    QFont level_font("Courier",6);
+    level_num->setFont(level_font);
+    level_num->setStyleSheet("QLabel { background-color : black; color : white; }");
+
+    //level_num->setFont(new QFont());
+    put_together->addWidget(level_num,0,Qt::AlignRight);
+
     //sets the main window of the gamboard
     this->setLayout(put_together);
     this->setStyleSheet("QLabel { background-color : white; color: black; }");
     this->setWindowTitle("Herding Sheep");
-
-
 
 }
 
@@ -239,6 +246,7 @@ void gameboard::clear_board(){
     // resets all the values of the board
     direction = 1;
     curr_level = 0;
+    level_num->setText(QString::number(curr_level));
     pick_char = 0;
     move_less = 0;
     move = false;
@@ -306,15 +314,7 @@ void gameboard::setlevelwindow(level_complete *l){
  * @param curr_level determines which level is set up in the gameboard
  */
 void gameboard::initialize_board(){
-/*
-    // only resets if just starting
-    if (curr_level == 0){
-        //resets lives counter
-        lives_remaining = 3;
-        for(size_t i=0; i < lives_remaining; ++i)
-            lives[i]->setPixmap(*hero_r_text);
-    }
-*/
+
     // stops movemenets
     move = false;
 
@@ -423,8 +423,15 @@ void gameboard::initialize_board(){
         add_snake();
         isSmart = true;
     }
-    // else game over, submit high score if a high score is reached
+    // keeps levels going on for a while
     else{
+
+        for (int i=0;i<(curr_level-2);++i)
+            add_sheep();
+        for (int j=0;j<(curr_level/2);++j)
+            add_snake();
+        isSmart = true;
+        /*
         //opens game over window
         //will let you submit name if new high score is reached
         if (score_num > smallest_score){
@@ -434,7 +441,7 @@ void gameboard::initialize_board(){
         //else it will open the Game Over window
         else{
             no_score_window->show();
-        }
+        }*/
     }
 }
 
@@ -1573,6 +1580,7 @@ void gameboard::next_level(){
 
     // increments the level number
     ++curr_level;
+    level_num->setText(QString::number(curr_level));
 
     // resets the progress on the level but not the score
     progress = 0;
@@ -1595,6 +1603,7 @@ void gameboard::next_level(){
 void gameboard::play_game(){
 
     curr_level = 0;
+    level_num->setText(QString::number(curr_level));
 
     // increments curr_level and initializes board with this number
     next_level();

@@ -21,7 +21,7 @@ public:
     bool isSheep() {return sheep;}
     bool isHero() {return hero;}
     bool isSnake() {return snake;}
-    bool isAnimal() {return snake || sheep;}
+    bool isAnimal() {return sheep;}
     bool isTempFence() {return tempFence;}
     bool notFillorFlagged() {return !fill_flag && !fence && !hero;}
 
