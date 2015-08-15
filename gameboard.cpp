@@ -431,17 +431,6 @@ void gameboard::initialize_board(){
         for (int j=0;j<(curr_level/2);++j)
             add_snake();
         isSmart = true;
-        /*
-        //opens game over window
-        //will let you submit name if new high score is reached
-        if (score_num > smallest_score){
-            new_score_window->score_num = score_num;
-            new_score_window->show();
-        }
-        //else it will open the Game Over window
-        else{
-            no_score_window->show();
-        }*/
     }
 }
 
@@ -516,7 +505,7 @@ void gameboard::update_hero(int x, int y, int nx, int ny){
             you_died("sheep");
             return;
         }
-        // then checks if hitting the hero
+        // then checks if hitting sheep
         else if (labels[ny*board_size+nx]->isSheep()){
 
             // first check if hero is a wolf
@@ -702,6 +691,7 @@ void gameboard::execute_move(int hero_move){
             //hero movements
             if (hero_move == 2){
                 //move up
+
                 update_hero(x,y,x,y-1);
             }
             else if (hero_move == 8){
@@ -884,14 +874,6 @@ void gameboard::move_snake(){
         //original position
         int x = snake_pos[i]->rx();
         int y = snake_pos[i]->ry();
-
-
-        // checks if the four directions a snake can go are fence spots
-        // variables named in number pad style again
-        //bool two = labels[(y-1)*board_size+x]->isFence();
-        //bool four = labels[y*board_size+(x-1)]->isFence();
-        //bool six = labels[y*board_size+(x+1)]->isFence();
-        //bool eight = labels[(y+1)*board_size+x]->isFence();
 
         int x_direc, y_direc;
 
@@ -1244,6 +1226,34 @@ void gameboard::finish_fence(int first_x, int first_y, int second_x, int second_
 
     int size = current_fence.size();
 
+    // first checks where to have the anchor
+    // where there is grass on either side of a tempfence spot
+    // so that it can fill in best
+    if (labels[first_y*board_size+first_x]->isFence() || labels[second_y*board_size+second_x]->isFence() || labels[first_y*board_size+first_x]->isTempFence() || labels[second_y*board_size+second_x]->isTempFence()){
+
+        //find the spot in the tempFence where there is grass on two sides
+        for (size_t i=0; i < current_fence.size();++i){
+            int _x = current_fence[i].rx();
+            int _y = current_fence[i].ry();
+
+            if (!labels[(_y+1)*board_size+_x]->isFence() && !labels[(_y-1)*board_size+_x]->isFence()){
+                first_y = _y+1;
+                second_y = _y-1;
+                first_x = _x;
+                second_x = _x;
+                break;
+            }
+            else if (!labels[_y*board_size+(_x+1)]->isFence() && !labels[_y*board_size+(_x-1)]->isFence()){
+                first_y = _y;
+                second_y = _y;
+                first_x = _x+1;
+                second_x = _x-1;
+                break;
+            }
+        }
+    }
+
+
     // only set to true in check if fill fence
     sheep_or_snake = false;
     animal_in_pool1 = false;
@@ -1457,8 +1467,10 @@ void gameboard::check_if_fill(int x, int y, bool is_first){
 void gameboard::fill_fence(std::vector<QPoint> fill_v){
 
     // fills fence in spots in the vector
-    for(auto i : fill_v)
-        labels[i.ry()*board_size+(i.rx())]->setFence();
+    for(auto i : fill_v){
+        if (!labels[i.ry()*board_size+(i.rx())]->isSnake())
+            labels[i.ry()*board_size+(i.rx())]->setFence();
+    }
 
     // updates the progress and the score
     update_nums();
