@@ -160,6 +160,11 @@ private:
     std::vector<QPoint> first_pool;
     std::vector<QPoint> second_pool;
 
+    QQueue<int> first_x_vec;
+    QQueue<int> second_x_vec;
+    QQueue<int> first_y_vec;
+    QQueue<int> second_y_vec;
+
     // used for keeping track of current_fence index when sheep hits fence
     int right_half;
     int left_half;

@@ -1060,7 +1060,7 @@ void gameboard::move_sheep(){
             sheep_hit_fence();
         }
         // then checks if the sheep is hitting the hero
-        if (labels[(y+y_direc)*board_size + (x+x_direc)]->isHero() && (y+y_direc != 0 && y+y_direc != board_size-1 && x+x_direc != 0 && x+x_direc != board_size-1))
+        if (labels[(y+y_direc)*board_size + (x+x_direc)]->isHero() && !labels[(y+y_direc)*board_size + (x+x_direc)]->isFence())
             sheep_hit_hero(i);
 
         //checks if it is moving into an taken spot
@@ -1230,35 +1230,40 @@ void gameboard::finish_fence(int first_x, int first_y, int second_x, int second_
     // first checks where to have the anchor
     // where there is grass on either side of a tempfence spot
     // so that it can fill in best
-    if (labels[first_y*board_size+first_x]->isAnyFence() || labels[second_y*board_size+second_x]->isAnyFence()){
+    //if (labels[first_y*board_size+first_x]->isAnyFence() || labels[second_y*board_size+second_x]->isAnyFence()){
+    first_x_vec.append(first_x);
+    first_y_vec.append(first_y);
+    second_x_vec.append(second_x);
+    second_y_vec.append(second_y);
 
-        //find the spot in the tempFence where there is grass on two sides
-        for (size_t i=0; i < current_fence.size();++i){
-            int _x = current_fence[i].rx();
-            int _y = current_fence[i].ry();
+    //find the spot in the tempFence where there is grass on two sides
+    // and there is not grass on two sides on the next spot
+    for (size_t i=0; i < current_fence.size()-1;++i){
+        int _x = current_fence[i].rx();
+        int _y = current_fence[i].ry();
 
+        int next_x = current_fence[i+1].rx();
+        int next_y = current_fence[i+1].ry();
+
+        // first make sure next spot is not valid
+        if ((labels[(next_y+1)*board_size+next_x]->isAnyFence() || labels[(next_y-1)*board_size+next_x]->isAnyFence()) && (labels[next_y*board_size+(next_x+1)]->isAnyFence() || labels[next_y*board_size+(next_x-1)]->isAnyFence())){
+
+            // add current spot if it is valid and next spot is not valid
             if (!labels[(_y+1)*board_size+_x]->isAnyFence() && !labels[(_y-1)*board_size+_x]->isAnyFence()){
-                first_y = _y+1;
-                second_y = _y-1;
-                first_x = _x;
-                second_x = _x;
-                break;
+                first_y_vec.append(_y+1);
+                second_y_vec.append(_y-1);
+                first_x_vec.append(_x);
+                second_x_vec.append(_x);
             }
             else if (!labels[_y*board_size+(_x+1)]->isAnyFence() && !labels[_y*board_size+(_x-1)]->isAnyFence()){
-                first_y = _y;
-                second_y = _y;
-                first_x = _x+1;
-                second_x = _x-1;
-                break;
+                first_y_vec.append(_y);
+                second_y_vec.append(_y);
+                first_x_vec.append(_x+1);
+                second_x_vec.append(_x-1);
             }
         }
     }
-
-
-    // only set to true in check if fill fence
-    sheep_or_snake = false;
-    animal_in_pool1 = false;
-    animal_in_pool2 = false;
+//}
 
     //changes all tempFences to normal fence
     //removes all tempFences from vector
@@ -1266,53 +1271,67 @@ void gameboard::finish_fence(int first_x, int first_y, int second_x, int second_
         labels[i.ry()*board_size+(i.rx())]->setFence();
     current_fence.clear();
 
-    // check which is inside and which is outside
-    // true and false refers to which vector to place points in
-    if (size > 0){
-        check_if_fill(first_x, first_y, true);
-        check_if_fill(second_x, second_y, false);
-    }
+    while (!first_x_vec.isEmpty()){
 
-    // check which pool will be used
-    if (first_pool.size() < second_pool.size())
-        sheep_or_snake = animal_in_pool1;
-    else
-        sheep_or_snake = animal_in_pool2;
+        first_x = first_x_vec.dequeue();
+        first_y = first_y_vec.dequeue();
+        second_x = second_x_vec.dequeue();
+        second_y = second_y_vec.dequeue();
 
-    if (!sheep_or_snake){
-        // fills fence according to which is smaller: pool_1 or pool_2
-        // 175 max so that can't fill up too much in one fence
-        if (first_pool.size() <= 175 || second_pool.size() <= 175){
+        // only set to true in check if fill fence
+        sheep_or_snake = false;
+        animal_in_pool1 = false;
+        animal_in_pool2 = false;
 
-            // first check if both sides are small enough to fill both and no animals in either side
-            if  (first_pool.size() <= 20 && second_pool.size() <= 20 && !animal_in_pool1 && !animal_in_pool2){
-                fill_fence(first_pool);
-                fill_fence(second_pool);
-                size += (first_pool.size() + second_pool.size());
-            }
-            // normal fill in routine, only filling smaller of two pools
-            else{
-                if (first_pool.size() < second_pool.size()){
+        // check which is inside and which is outside
+        // true and false refers to which vector to place points in
+        if (size > 0){
+            check_if_fill(first_x, first_y, true);
+            check_if_fill(second_x, second_y, false);
+        }
+
+        // check which pool will be used
+        if (first_pool.size() < second_pool.size())
+            sheep_or_snake = animal_in_pool1;
+        else
+            sheep_or_snake = animal_in_pool2;
+
+        if (!sheep_or_snake){
+            // fills fence according to which is smaller: pool_1 or pool_2
+            // 700 max so that can't fill up too much in one fence
+            if (first_pool.size() <= 600 || second_pool.size() <= 600){
+
+                // first check if both sides are small enough to fill both and no animals in either side
+                if  (first_pool.size() <= 20 && second_pool.size() <= 20 && !animal_in_pool1 && !animal_in_pool2){
                     fill_fence(first_pool);
-                    size += first_pool.size();
-                }
-                else{
                     fill_fence(second_pool);
-                    size += second_pool.size();
+                    size += (first_pool.size() + second_pool.size());
+                }
+                // normal fill in routine, only filling smaller of two pools
+                else{
+                    if (first_pool.size() < second_pool.size()){
+                        fill_fence(first_pool);
+                        size += first_pool.size();
+                    }
+                    else{
+                        fill_fence(second_pool);
+                        size += second_pool.size();
+                    }
                 }
             }
         }
-    }
 
-    // empty the vectors once done
-    first_pool.clear();
-    second_pool.clear();
+        // empty the vectors once done
+        first_pool.clear();
+        second_pool.clear();
+
 
     // clears all labels of flag
     for(int i=0;i<board_size;i++){
         for(int j=0;j<board_size;j++){
             labels[i*board_size+j]->reset_flag();
         }
+    }
     }
 
     // change the progress and score
