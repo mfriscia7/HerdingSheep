@@ -68,6 +68,7 @@ int main(int argc, char *argv[])
     QObject::connect(score_window->confirm_button(), SIGNAL(clicked()), mm, SLOT(show()));
     QObject::connect(score_window->confirm_button(), SIGNAL(clicked()), g, SLOT(clear_board_slot()));
     QObject::connect(score_window->confirm_button(), SIGNAL(clicked()), mm, SLOT(update_high_scores()));
+    QObject::connect(game_over_window->no_button(), SIGNAL(clicked()), g, SLOT(clear_board_slot()));
     QObject::connect(game_over_window->no_button(), SIGNAL(clicked()), mm, SLOT(show()));
     QObject::connect(game_over_window->no_button(), SIGNAL(clicked()), game_over_window, SLOT(hide()));
 

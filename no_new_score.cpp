@@ -43,3 +43,7 @@ void no_new_score::setnobutton(QPushButton* p){
 QPushButton* no_new_score::no_button(){
     return button;
 }
+
+// destructor
+no_new_score::~no_new_score()
+{}

@@ -13,6 +13,7 @@ class no_new_score : public QWidget
 
 public:
     explicit no_new_score(QWidget *parent=0);
+    ~no_new_score();
 
     void setnobutton(QPushButton* p);
     QPushButton* no_button();
