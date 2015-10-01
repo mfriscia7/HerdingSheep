@@ -1353,132 +1353,80 @@ void gameboard::finish_fence(int first_x, int first_y, int second_x, int second_
 void gameboard::check_if_fill(int x, int y, bool is_first){
 
     int n_x, n_y;
+    std::vector<QPoint>* pool_ref;
+    QQueue<QPoint>* q_ref;
 
     if (is_first){
-
-        // first make sure that the queue is empty
-        if (!first_queue.isEmpty())
-            first_queue.clear();
-
-        if (!labels[y*board_size+x]->isFilled())
-            first_queue.enqueue(QPoint(x,y));
-
-        while(!first_queue.isEmpty()){
-
-            // take first off of the queue
-            QPoint next_spot = first_queue.dequeue();
-            n_x = next_spot.rx();
-            n_y = next_spot.ry();
-
-            // flags the spot as checked by this method
-            labels[y*board_size+x]->flag_for_fill();
-
-            // add the processed QPoint to the vector to be filled
-            first_pool.push_back(QPoint(n_x,n_y));
-
-            // check left
-            if ((n_x-1) >= 0 && labels[n_y*board_size+(n_x-1)]->notFillorFlagged()){
-                first_queue.enqueue(QPoint(n_x-1,n_y));
-                // flags the spot as checked by this method
-                labels[n_y*board_size+(n_x-1)]->flag_for_fill();
-
-                if (labels[n_y*board_size+(n_x-1)]->isAnimal())
-                    animal_in_pool1 = true;
-            }
-
-            // check down
-            if ((n_y+1) < board_size && labels[(n_y+1)*board_size+n_x]->notFillorFlagged()){
-                first_queue.enqueue(QPoint(n_x,n_y+1));
-                // flags the spot as checked by this method
-                labels[(n_y+1)*board_size+n_x]->flag_for_fill();
-
-                if (labels[(n_y+1)*board_size+n_x]->isAnimal())
-                    animal_in_pool1 = true;
-            }
-
-            // check right
-            if ((n_x+1) < board_size && labels[n_y*board_size+(n_x+1)]->notFillorFlagged()){
-                first_queue.enqueue(QPoint(n_x+1,n_y));
-                // flags the spot as checked by this method
-                labels[n_y*board_size+(n_x+1)]->flag_for_fill();
-
-                if (labels[n_y*board_size+(n_x+1)]->isAnimal())
-                    animal_in_pool1 = true;
-            }
-
-            // check up
-            if ((n_y-1) >= 0 && labels[(n_y-1)*board_size+n_x]->notFillorFlagged()){
-                first_queue.enqueue(QPoint(n_x,n_y-1));
-                // flags the spot as checked by this method
-                labels[(n_y-1)*board_size+n_x]->flag_for_fill();
-
-                if (labels[(n_y-1)*board_size+n_x]->isAnimal())
-                    animal_in_pool1 = true;
-            }
-        }
+        pool_ref = &first_pool;
+        q_ref = &first_queue;
     }
     else{
-        // first make sure the queue is empty
-        if (!second_queue.isEmpty())
-            second_queue.clear();
+        pool_ref = &second_pool;
+        q_ref = &second_queue;
+    }
 
-        if (!labels[y*board_size+x]->isFilled())
-            second_queue.enqueue(QPoint(x,y));
 
-        while (!second_queue.isEmpty()){
+    // first make sure that the queue is empty
+    if (!q_ref->isEmpty())
+        q_ref->clear();
 
-            //take first off of the queue
-            QPoint next_spot = second_queue.dequeue();
-            n_x = next_spot.rx();
-            n_y = next_spot.ry();
+    if (!labels[y*board_size+x]->isFilled())
+        q_ref->enqueue(QPoint(x,y));
 
+    while(!q_ref->isEmpty()){
+
+        // take first off of the queue
+        QPoint next_spot = q_ref->dequeue();
+        n_x = next_spot.rx();
+        n_y = next_spot.ry();
+
+        // flags the spot as checked by this method
+        labels[y*board_size+x]->flag_for_fill();
+
+        // add the processed QPoint to the vector to be filled
+        pool_ref->push_back(QPoint(n_x,n_y));
+
+        // check left
+        if ((n_x-1) >= 0 && labels[n_y*board_size+(n_x-1)]->notFillorFlagged()){
+            q_ref->enqueue(QPoint(n_x-1,n_y));
             // flags the spot as checked by this method
-            labels[y*board_size+x]->flag_for_fill();
+            labels[n_y*board_size+(n_x-1)]->flag_for_fill();
 
-            // add the processed QPoint to the vector to be filled
-            second_pool.push_back(QPoint(n_x,n_y));
+            if (labels[n_y*board_size+(n_x-1)]->isAnimal())
+                animal_in_pool1 = true;
+        }
 
-            // check left
-            if (n_x > 1 && labels[n_y*board_size+(n_x-1)]->notFillorFlagged()){
-                second_queue.enqueue(QPoint(n_x-1,n_y));
-                // flags the spot as checked by this method
-                labels[n_y*board_size+(n_x-1)]->flag_for_fill();
+        // check down
+        if ((n_y+1) < board_size && labels[(n_y+1)*board_size+n_x]->notFillorFlagged()){
+            q_ref->enqueue(QPoint(n_x,n_y+1));
+            // flags the spot as checked by this method
+            labels[(n_y+1)*board_size+n_x]->flag_for_fill();
 
-                if (labels[n_y*board_size+(n_x-1)]->isAnimal())
-                    animal_in_pool2 = true;
-            }
+            if (labels[(n_y+1)*board_size+n_x]->isAnimal())
+                animal_in_pool1 = true;
+        }
 
-            // check down
-            if (n_y+1 < board_size && labels[(n_y+1)*board_size+n_x]->notFillorFlagged()){
-                second_queue.enqueue(QPoint(n_x,n_y+1));
-                // flags the spot as checked by this method
-                labels[(n_y+1)*board_size+n_x]->flag_for_fill();
+        // check right
+        if ((n_x+1) < board_size && labels[n_y*board_size+(n_x+1)]->notFillorFlagged()){
+            q_ref->enqueue(QPoint(n_x+1,n_y));
+            // flags the spot as checked by this method
+            labels[n_y*board_size+(n_x+1)]->flag_for_fill();
 
-                if (labels[(n_y+1)*board_size+n_x]->isAnimal())
-                    animal_in_pool2 = true;
-            }
+            if (labels[n_y*board_size+(n_x+1)]->isAnimal())
+                animal_in_pool1 = true;
+        }
 
-            // check right
-            if (n_x < board_size && labels[n_y*board_size+(n_x+1)]->notFillorFlagged()){
-                second_queue.enqueue(QPoint(n_x+1,n_y));
-                // flags the spot as checked by this method
-                labels[n_y*board_size+(n_x+1)]->flag_for_fill();
+        // check up
+        if ((n_y-1) >= 0 && labels[(n_y-1)*board_size+n_x]->notFillorFlagged()){
+            q_ref->enqueue(QPoint(n_x,n_y-1));
+            // flags the spot as checked by this method
+            labels[(n_y-1)*board_size+n_x]->flag_for_fill();
 
-                if (labels[n_y*board_size+(n_x+1)]->isAnimal())
-                    animal_in_pool2 = true;
-            }
-
-            // check up
-            if (n_y > 1 && labels[(n_y-1)*board_size+n_x]->notFillorFlagged()){
-                second_queue.enqueue(QPoint(n_x,n_y-1));
-                // flags the spot as checked by this method
-                labels[(n_y-1)*board_size+n_x]->flag_for_fill();
-
-                if (labels[(n_y-1)*board_size+n_x]->isAnimal())
-                    animal_in_pool2 = true;
-            }
+            if (labels[(n_y-1)*board_size+n_x]->isAnimal())
+                animal_in_pool1 = true;
         }
     }
+
 }
 
 /** @function fill_fence
