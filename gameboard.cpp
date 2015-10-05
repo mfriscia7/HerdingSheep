@@ -1392,8 +1392,12 @@ void gameboard::check_if_fill(int x, int y, bool is_first){
             // flags the spot as checked by this method
             labels[n_y*board_size+(n_x-1)]->flag_for_fill();
 
-            if (labels[n_y*board_size+(n_x-1)]->isAnimal())
-                animal_in_pool1 = true;
+            if (labels[n_y*board_size+(n_x-1)]->isAnimal()){
+                if (*pool_ref == first_pool)
+                    animal_in_pool1 = true;
+                else
+                    animal_in_pool2 = true;
+            }
         }
 
         // check down
@@ -1402,8 +1406,12 @@ void gameboard::check_if_fill(int x, int y, bool is_first){
             // flags the spot as checked by this method
             labels[(n_y+1)*board_size+n_x]->flag_for_fill();
 
-            if (labels[(n_y+1)*board_size+n_x]->isAnimal())
-                animal_in_pool1 = true;
+            if (labels[(n_y+1)*board_size+n_x]->isAnimal()){
+                if (*pool_ref == first_pool)
+                    animal_in_pool1 = true;
+                else
+                    animal_in_pool2 = true;
+            }
         }
 
         // check right
@@ -1412,8 +1420,12 @@ void gameboard::check_if_fill(int x, int y, bool is_first){
             // flags the spot as checked by this method
             labels[n_y*board_size+(n_x+1)]->flag_for_fill();
 
-            if (labels[n_y*board_size+(n_x+1)]->isAnimal())
-                animal_in_pool1 = true;
+            if (labels[n_y*board_size+(n_x+1)]->isAnimal()){
+                if (*pool_ref == first_pool)
+                    animal_in_pool1 = true;
+                else
+                    animal_in_pool2 = true;
+            }
         }
 
         // check up
@@ -1422,8 +1434,12 @@ void gameboard::check_if_fill(int x, int y, bool is_first){
             // flags the spot as checked by this method
             labels[(n_y-1)*board_size+n_x]->flag_for_fill();
 
-            if (labels[(n_y-1)*board_size+n_x]->isAnimal())
-                animal_in_pool1 = true;
+            if (labels[(n_y-1)*board_size+n_x]->isAnimal()){
+                if (*pool_ref == first_pool)
+                    animal_in_pool1 = true;
+                else
+                    animal_in_pool2 = true;
+            }
         }
     }
 
